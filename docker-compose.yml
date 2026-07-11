@@ -1,0 +1,9 @@
+services:
+  web-app:
+    image: pujosn/assignment-mifix:latest
+    container_name: assignment_php_app
+    ports:
+      - "8080:80"  
+    volumes:
+      - ./src:/var/www/html  
+    restart: unless-stopped
