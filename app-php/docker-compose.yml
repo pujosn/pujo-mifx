@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  webserver:
+    image: pujosn/assignment-mifx:latest
+    container_name: php_nginx_container
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+    restart: always
