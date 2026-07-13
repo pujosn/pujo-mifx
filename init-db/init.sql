@@ -1,0 +1,5 @@
+CREATE USER sre_readonly WITH PASSWORD 'readonlypassword';
+GRANT CONNECT ON DATABASE sre TO sre_readonly;
+GRANT USAGE ON SCHEMA public TO sre_readonly;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO sre_readonly;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO sre_readonly;
