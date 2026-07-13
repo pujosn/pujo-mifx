@@ -6,13 +6,11 @@ on:
     paths:
       - 'app-docker/Dockerfile'
       - 'app-php/docker-compose.yml'
-      - 'app-php/src/**'
-      - 'app-ansible/**'
 
 jobs:
-  
-  # 1. JOB BUILD (Jalan jika Dockerfile berubah)
-  
+  # =======================================================
+  # 1. JOB BUILD
+  # =======================================================
   build_image:
     name: Build Docker Image
     runs-on: ubuntu-latest
@@ -22,7 +20,6 @@ jobs:
         with:
           fetch-depth: 2
 
-      # Cek apakah Dockerfile di app-docker berubah
       - name: Check if Dockerfile changed
         id: check_file
         run: |
@@ -48,9 +45,9 @@ jobs:
           push: true
           tags: pujosn/assignment-mifx:latest
 
-  
-  # 2. JOB DEPLOY (Selalu jalan untuk menerapkan perubahan)
-  
+ # =======================================================
+  # 2. JOB DEPLOY
+  # =======================================================
   deploy_app:
     name: Deploy via Ansible
     runs-on: ubuntu-latest
@@ -71,5 +68,9 @@ jobs:
           pip install ansible
 
       - name: Run Ansible Playbook
+        # 🛠️ [DIPERBAIKI]: Mengirimkan secrets ke Ansible via Environment Variables
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASS: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           ansible-playbook -i app-ansible/hosts.ini app-ansible/deploy.yml
