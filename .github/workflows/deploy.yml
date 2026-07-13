@@ -6,6 +6,7 @@ on:
     paths:
       - 'app-docker/Dockerfile'
       - 'app-php/docker-compose.yml'
+      - 'app-php/src/**'
 
 jobs:
   
