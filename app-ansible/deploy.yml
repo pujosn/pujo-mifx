@@ -4,7 +4,7 @@
   become: false 
   
   vars:
-    app_dir: "/home/pujo/Music/pujo-mifx/app-deployed"
+    app_dir: "{{ ansible_env.HOME }}/app-deployed"
 
   tasks:
     - name: Ensure application directory exists on target server
@@ -15,7 +15,7 @@
 
     - name: Copy project files to target server
       ansible.builtin.copy:
-        src: "../app-php/" 
+        src: "{{ playbook_dir }}/../app-php/" 
         dest: "{{ app_dir }}/"
         mode: '0755'
 
@@ -25,14 +25,12 @@
         chdir: "{{ app_dir }}"
       changed_when: true
 
-   
     - name: Stop and remove existing containers safely
       ansible.builtin.command:
         cmd: docker-compose down
         chdir: "{{ app_dir }}"
       failed_when: false 
 
-    
     - name: Force update and recreate Docker Compose containers via standard Docker CLI
       ansible.builtin.command:
         cmd: docker-compose up -d
