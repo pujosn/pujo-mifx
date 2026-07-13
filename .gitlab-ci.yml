@@ -1,0 +1,9 @@
+# Tugas C "fix .gitlab-ci.yml" eror
+
+stages:
+- unittest
+- security-scan
+security_scan:
+  stage: security-scan
+  script:
+    - trivy repo ./
