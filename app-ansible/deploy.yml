@@ -21,18 +21,18 @@
 
     - name: Pull latest Docker images from registry
       ansible.builtin.command:
-        cmd: docker-compose pull   
+        cmd: docker compose pull   
         chdir: "{{ app_dir }}"
       changed_when: true
 
     - name: Stop and remove existing containers safely
       ansible.builtin.command:
-        cmd: docker-compose down
+        cmd: docker compose down
         chdir: "{{ app_dir }}"
       failed_when: false 
 
     - name: Force update and recreate Docker Compose containers via standard Docker CLI
       ansible.builtin.command:
-        cmd: docker-compose up -d
+        cmd: docker compose up -d
         chdir: "{{ app_dir }}"
       changed_when: true
