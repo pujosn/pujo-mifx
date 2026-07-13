@@ -10,9 +10,9 @@ on:
       - 'app-ansible/**'
 
 jobs:
-  # =======================================================
+  
   # 1. JOB BUILD
-  # =======================================================
+  
   build_image:
     name: Build Docker Image
     runs-on: ubuntu-latest
@@ -47,9 +47,9 @@ jobs:
           push: true
           tags: pujosn/assignment-mifx:latest
 
-# =======================================================
+
   # 2. JOB DEPLOY
-  # =======================================================
+  
   deploy_app:
     name: Deploy via Ansible
     runs-on: ubuntu-latest
@@ -73,4 +73,4 @@ jobs:
         # 🛠️ [DIPERBAIKI]: Mengirimkan variabel langsung lewat argumen -e ke Ansible
         run: |
           ansible-playbook -i app-ansible/hosts.ini app-ansible/deploy.yml \
-            -e "docker_user=${{ secrets.DOCKER_USERNAME }} docker_pass=${{ secrets.DOCKER_PASSWORD }}"
+            
