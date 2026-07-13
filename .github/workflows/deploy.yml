@@ -47,7 +47,7 @@ jobs:
           push: true
           tags: pujosn/assignment-mifx:latest
 
- # =======================================================
+# =======================================================
   # 2. JOB DEPLOY
   # =======================================================
   deploy_app:
@@ -70,9 +70,7 @@ jobs:
           pip install ansible
 
       - name: Run Ansible Playbook
-        # 🛠️ [DIPERBAIKI]: Mengirimkan secrets ke Ansible via Environment Variables
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASS: ${{ secrets.DOCKER_PASSWORD }}
+        # 🛠️ [DIPERBAIKI]: Mengirimkan variabel langsung lewat argumen -e ke Ansible
         run: |
-          ansible-playbook -i app-ansible/hosts.ini app-ansible/deploy.yml
+          ansible-playbook -i app-ansible/hosts.ini app-ansible/deploy.yml \
+            -e "docker_user=${{ secrets.DOCKER_USERNAME }} docker_pass=${{ secrets.DOCKER_PASSWORD }}"

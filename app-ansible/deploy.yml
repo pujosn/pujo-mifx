@@ -19,10 +19,10 @@
         dest: "{{ app_dir }}/"
         mode: '0755'
 
-    
+    # 🛠️ [DIPERBAIKI]: Membaca variabel langsung dari extra-vars (-e) github actions
     - name: Log in to Docker Hub via Ansible
       ansible.builtin.command:
-        cmd: "docker login -u {{ ansible_env.DOCKER_USER }} -p {{ ansible_env.DOCKER_PASS }}"
+        cmd: "docker login -u {{ docker_user }} -p {{ docker_pass }}"
       no_log: true 
 
     - name: Pull latest Docker images from registry
