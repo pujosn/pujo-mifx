@@ -36,3 +36,12 @@
         cmd: docker compose up -d
         chdir: "{{ app_dir }}"
       changed_when: true
+
+    - name: Verify that the web application is running properly
+      ansible.builtin.uri:
+        url: http://localhost:8080
+        status_code: 200
+      register: web_check
+      retries: 3
+      delay: 5
+      until: web_check.status == 200
