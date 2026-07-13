@@ -8,6 +8,7 @@ on:
       - 'app-php/docker-compose.yml'
       - 'app-php/src/**'
       - 'app-ansible/**'
+      - '.github/workflows/deploy.yml'
 
 jobs:
   
