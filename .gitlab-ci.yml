@@ -1,0 +1,33 @@
+stages:
+  - build
+  - deploy
+
+# =======================================================
+# 1. JOB BUILD
+# =======================================================
+build_image:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  rules:
+    - changes:
+        - "app-php/Dockerfile"
+  script:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker build -t pujosn/assignment-mifx:latest ./app-php
+    - docker push pujosn/assignment-mifx:latest
+
+# =======================================================
+# 2. JOB DEPLOY
+# =======================================================
+
+deploy_app:
+  stage: deploy
+  image: cytopia/ansible:latest
+  rules:
+    - changes:
+        - "app-php/Dockerfile"         
+        - "app-php/docker-compose.yml" 
+  script:
+    - ansible-playbook -i app-ansible/hosts.ini app-ansible/deploy.yml
