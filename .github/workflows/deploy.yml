@@ -1,0 +1,73 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ master, main ]
+    paths:
+      - 'app-docker/Dockerfile'
+      - 'app-php/docker-compose.yml'
+
+jobs:
+  
+  # 1. JOB BUILD (Jalan jika Dockerfile berubah)
+  
+  build_image:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      # Cek apakah Dockerfile di app-docker berubah
+      - name: Check if Dockerfile changed
+        id: check_file
+        run: |
+          if git diff --name-only HEAD~1 HEAD | grep -q 'app-docker/Dockerfile'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Login to Docker Hub
+        if: steps.check_file.outputs.changed == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push to Docker Hub
+        if: steps.check_file.outputs.changed == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./app-php
+          file: ./app-docker/Dockerfile
+          push: true
+          tags: pujosn/assignment-mifx:latest
+
+  
+  # 2. JOB DEPLOY (Selalu jalan untuk menerapkan perubahan)
+  
+  deploy_app:
+    name: Deploy via Ansible
+    runs-on: ubuntu-latest
+    needs: build_image
+    if: always() && (needs.build_image.result == 'success' || needs.build_image.result == 'skipped')
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Ansible
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible
+
+      - name: Run Ansible Playbook
+        run: |
+          ansible-playbook -i app-ansible/hosts.ini app-ansible/deploy.yml
